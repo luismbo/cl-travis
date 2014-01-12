@@ -65,6 +65,17 @@ function install_sbcl {
     install_cl_launch "LISP=sbcl" "SBCL=\"$SBCL_DIR/run-sbcl.sh\""
 }
 
+CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.9/ccl-1.9-linuxx86.tar.gz"
+CCL_TARBALL="ccl.tar.gz"
+CCL_DIR="$HOME/ccl"
+
+function install_ccl {
+    echo "Installing CCL..."
+    get "$CCL_TARBALL_URL" "$CCL_TARBALL"
+    unpack -z "$CCL_TARBALL" "$CCL_DIR"
+    install_cl_launch "LISP=ccl" "CCL=$CCL_DIR/lx86cl64"
+}
+
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
 
 function install_quicklisp {
@@ -74,7 +85,19 @@ function install_quicklisp {
 }
 
 download_cl_launch
-install_sbcl
+
+case "$LISP" in
+    sbcl)
+        install_sbcl
+        ;;
+    ccl)
+        install_ccl
+        ;;
+    *)
+        echo "Unrecognised lisp: '$LISP'"
+        exit 1
+        ;;
+esac
 
 cl-launch -i '(format t "~%~a ~a up and running!~%~%"
                       (lisp-implementation-type)

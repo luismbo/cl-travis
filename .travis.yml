@@ -1,8 +1,9 @@
 language: lisp
 
-#env:
-#  matrix:
-#    - LISP=sbcl
+env:
+  matrix:
+    - LISP=sbcl
+    - LISP=ccl
 
 #matrix:
 #  allow_failures:
