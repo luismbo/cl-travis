@@ -1,0 +1,14 @@
+language: lisp
+
+#env:
+#  matrix:
+#    - LISP=sbcl
+
+#matrix:
+#  allow_failures:
+#    - env: LISP=sbcl
+
+install: ./install.sh
+script:
+  - cl-launch -S "$(pwd)" -i '(load "~/quicklisp/setup.lisp") (ql:quickload :cl-travis-test) (rtest:do-tests) (or (null (rtest:pending-tests)) (cl-launch::quit 1))'
+  - cl-launch -S "$(pwd)" -i '(load "~/quicklisp/setup.lisp") (ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (or (null (rtest:pending-tests)) (cl-launch::quit 1))'; [ $? -eq 1 ]
