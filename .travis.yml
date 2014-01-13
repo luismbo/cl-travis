@@ -5,6 +5,7 @@ env:
     - LISP=sbcl
     - LISP=ccl
     - LISP=clisp
+    - LISP=cmucl
 
 #matrix:
 #  allow_failures:

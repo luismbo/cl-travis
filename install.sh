@@ -23,6 +23,12 @@ function unpack {
     tar -C "$destination" --strip-components=1 "$opt" -xf "$file"
 }
 
+function install_i386_arch {
+    sudo dpkg --add-architecture i386
+    sudo apt-get update
+    sudo apt-get install libc6:i386
+}
+
 CL_LAUNCH_URL="http://common-lisp.net/project/xcvb/cl-launch/cl-launch.tar.gz"
 CL_LAUNCH_DIR="$HOME/cl-launch"
 CL_LAUNCH_TARBALL="$HOME/cl-launch.tar.gz"
@@ -79,6 +85,27 @@ function install_ccl {
 # version of ASDF known to work with cl-launch
 ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
 
+CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.extra.tar.bz2"
+CMUCL_TARBALL="cmucl.tar.bz2"
+CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
+CMUCL_DIR="$HOME/cmucl"
+
+function install_cmucl {
+    install_i386_arch
+    get "$CMUCL_TARBALL_URL" "$CMUCL_TARBALL"
+    get "$CMUCL_EXTRA_TARBALL_URL" "$CMUCL_EXTRA_TARBALL"
+    mkdir -p "$CMUCL_DIR"
+    tar -C "$CMUCL_DIR" -xjf "$CMUCL_TARBALL"
+    tar -C "$CMUCL_DIR" -xjf "$CMUCL_EXTRA_TARBALL"
+    get "$ASDF_URL" asdf.lisp
+    echo "(load \"$HOME/asdf.lisp\")" > "$HOME/.cmucl-init.lisp"
+    install_cl_launch "LISP=cmucl" \
+        "CMUCL=\"$CMUCL_DIR/bin/lisp\"" \
+        "CMUCLLIB=\"$CMUCL_DIR/lib/cmucl/lib\"" \
+        "CMUCL_OPTIONS='-quiet'"
+}
+
 function install_clisp {
     echo "Installing CLISP..."
     sudo apt-get install clisp
@@ -104,6 +131,9 @@ case "$LISP" in
         ;;
     ccl)
         install_ccl
+        ;;
+    cmucl)
+        install_cmucl
         ;;
     clisp)
         install_clisp
