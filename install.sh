@@ -144,21 +144,11 @@ function install_quicklisp {
 download_cl_launch
 
 case "$LISP" in
-    abcl)
-        install_abcl
-        ;;
-    sbcl)
-        install_sbcl
-        ;;
-    ccl)
-        install_ccl
-        ;;
-    cmucl)
-        install_cmucl
-        ;;
-    clisp)
-        install_clisp
-        ;;
+    abcl) install_abcl ;;
+    sbcl) install_sbcl ;;
+    ccl) install_ccl ;;
+    cmucl) install_cmucl ;;
+    clisp) install_clisp ;;
     *)
         echo "Unrecognised lisp: '$LISP'"
         exit 1
