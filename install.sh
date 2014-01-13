@@ -24,7 +24,8 @@ function unpack {
 }
 
 function install_i386_arch {
-    sudo dpkg --add-architecture i386
+    # Travis-CI's dpkg doesn't seem to know about --add-architecture.
+    #sudo dpkg --add-architecture i386
     sudo apt-get update
     sudo apt-get install libc6:i386
 }
