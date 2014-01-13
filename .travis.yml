@@ -11,7 +11,7 @@ env:
 #  allow_failures:
 #    - env: LISP=sbcl
 
-install: ./install.sh
+install: ./install.sh || curl https://raw2.github.com/luismbo/cl-travis/master/install.sh | sh
 script:
   - cl-launch -S "$(pwd)" -i '(load "~/quicklisp/setup.lisp") (ql:quickload :cl-travis-test) (rtest:do-tests) (or (null (rtest:pending-tests)) (cl-launch::quit 1))'
   - cl-launch -S "$(pwd)" -i '(load "~/quicklisp/setup.lisp") (ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (or (null (rtest:pending-tests)) (cl-launch::quit 1))'; [ $? -eq 1 ]
