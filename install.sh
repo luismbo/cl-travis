@@ -118,12 +118,10 @@ function install_cmucl {
     mkdir -p "$CMUCL_DIR"
     tar -C "$CMUCL_DIR" -xjf "$CMUCL_TARBALL"
     tar -C "$CMUCL_DIR" -xjf "$CMUCL_EXTRA_TARBALL"
-    get "$ASDF_URL" asdf.lisp
-    echo "(load \"$HOME/asdf.lisp\")" > "$HOME/.cmucl-init.lisp"
+
     install_cl_launch "LISP=cmucl" \
         "CMUCL=\"$CMUCL_DIR/bin/lisp\"" \
-        "CMUCLLIB=\"$CMUCL_DIR/lib/cmucl/lib\"" \
-        "CMUCL_OPTIONS='-quiet'"
+        "CMUCLLIB=\"$CMUCL_DIR/lib/cmucl/lib\""
 }
 
 function install_clisp {
