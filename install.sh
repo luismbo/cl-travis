@@ -61,23 +61,35 @@ function install_cl_launch {
         -B install
 }
 
+# install_script <path> <lines...>
+function install_script {
+    path=$1; shift
+    tmp=$(mktemp)
+
+    echo "#!/bin/sh" > "$tmp"
+    for line; do
+        echo "$line" >> "$tmp"
+    done
+    chmod 755 "$tmp"
+
+    sudo mv "$tmp" "$path"
+}
+
 ABCL_TARBALL_URL="http://www.abcl.org/releases/1.2.1/abcl-bin-1.2.1.tar.gz"
 ABCL_TARBALL="abcl.tar.gz"
 ABCL_DIR="$HOME/abcl"
-ABCL_SCRIPT="$ABCL_DIR/run-abcl.sh"
+ABCL_SCRIPT="/usr/local/bin/abcl"
 
 function install_abcl {
     sudo apt-get install default-jre
     get "$ABCL_TARBALL_URL" "$ABCL_TARBALL"
     unpack -z "$ABCL_TARBALL" "$ABCL_DIR"
 
-    cat >"$ABCL_SCRIPT" <<EOF
-#!/bin/sh
-java -cp "$ABCL_DIR/abcl-contrib.jar" -jar "$ABCL_DIR/abcl.jar" "\$@"
-EOF
-    chmod 755 "$ABCL_SCRIPT"
+    install_script "$ABCL_SCRIPT" \
+        "java -cp \"$ABCL_DIR/abcl-contrib.jar\" \
+              -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
 
-    install_cl_launch "LISP=abcl" "ABCL=\"$ABCL_SCRIPT\""
+    install_cl_launch "LISP=abcl"
 }
 
 SBCL_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.1.14/sbcl-1.1.14-x86-64-linux-binary.tar.bz2"
@@ -88,30 +100,32 @@ function install_sbcl {
     echo "Installing SBCL..."
     get "$SBCL_TARBALL_URL" "$SBCL_TARBALL"
     unpack -j "$SBCL_TARBALL" "$SBCL_DIR"
-    install_cl_launch "LISP=sbcl" "SBCL=\"$SBCL_DIR/run-sbcl.sh\""
+    ( cd "$SBCL_DIR" && sudo bash install.sh )
+    install_cl_launch "LISP=sbcl"
 }
 
 CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.9/ccl-1.9-linuxx86.tar.gz"
 CCL_TARBALL="ccl.tar.gz"
 CCL_DIR="$HOME/ccl"
+CCL_SCRIPT="/usr/local/bin/ccl"
 
 function install_ccl {
     echo "Installing CCL..."
     get "$CCL_TARBALL_URL" "$CCL_TARBALL"
     unpack -z "$CCL_TARBALL" "$CCL_DIR"
-    install_cl_launch "LISP=ccl" "CCL=$CCL_DIR/lx86cl64"
+    install_script "$CCL_SCRIPT" "\"$CCL_DIR/lx86cl64\" \"\$@\""
+    install_cl_launch "LISP=ccl"
 }
-
-# version of ASDF known to work with cl-launch
-ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
 
 CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.tar.bz2"
 CMUCL_EXTRA_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.extra.tar.bz2"
 CMUCL_TARBALL="cmucl.tar.bz2"
 CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
 CMUCL_DIR="$HOME/cmucl"
+CMUCL_SCRIPT="/usr/local/bin/cmucl"
 
 function install_cmucl {
+    echo "Installing CMUCL..."
     install_i386_arch
     get "$CMUCL_TARBALL_URL" "$CMUCL_TARBALL"
     get "$CMUCL_EXTRA_TARBALL_URL" "$CMUCL_EXTRA_TARBALL"
@@ -119,10 +133,14 @@ function install_cmucl {
     tar -C "$CMUCL_DIR" -xjf "$CMUCL_TARBALL"
     tar -C "$CMUCL_DIR" -xjf "$CMUCL_EXTRA_TARBALL"
 
-    install_cl_launch "LISP=cmucl" \
-        "CMUCL=\"$CMUCL_DIR/bin/lisp\"" \
-        "CMUCLLIB=\"$CMUCL_DIR/lib/cmucl/lib\""
+    install_script "$CMUCL_SCRIPT" \
+        "CMUCLLIB=\"$CMUCL_DIR/lib/cmucl/lib\" \"$CMUCL_DIR/bin/lisp\" \"\$@\""
+
+    install_cl_launch "LISP=cmucl"
 }
+
+# version of ASDF known to work with cl-launch
+ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
 
 function install_clisp {
     echo "Installing CLISP..."
