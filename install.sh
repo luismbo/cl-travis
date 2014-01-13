@@ -76,6 +76,18 @@ function install_ccl {
     install_cl_launch "LISP=ccl" "CCL=$CCL_DIR/lx86cl64"
 }
 
+# version of ASDF known to work with cl-launch
+ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
+
+function install_clisp {
+    echo "Installing CLISP..."
+    sudo apt-get install clisp
+    get "$ASDF_URL" asdf.lisp
+    echo "(load \"$HOME/asdf.lisp\")" > "$HOME/.clisprc.lisp"
+    # tweaking CLISP_OPTIONS so that ASDF gets loaded via the RC file.
+    install_cl_launch "LISP=clisp" "CLISP_OPTIONS=\"--quiet --quiet\""
+}
+
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
 
 function install_quicklisp {
@@ -92,6 +104,9 @@ case "$LISP" in
         ;;
     ccl)
         install_ccl
+        ;;
+    clisp)
+        install_clisp
         ;;
     *)
         echo "Unrecognised lisp: '$LISP'"
