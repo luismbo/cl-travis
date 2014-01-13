@@ -61,6 +61,25 @@ function install_cl_launch {
         -B install
 }
 
+ABCL_TARBALL_URL="http://www.abcl.org/releases/1.2.1/abcl-bin-1.2.1.tar.gz"
+ABCL_TARBALL="abcl.tar.gz"
+ABCL_DIR="$HOME/abcl"
+ABCL_SCRIPT="$ABCL_DIR/run-abcl.sh"
+
+function install_abcl {
+    sudo apt-get install default-jre
+    get "$ABCL_TARBALL_URL" "$ABCL_TARBALL"
+    unpack -z "$ABCL_TARBALL" "$ABCL_DIR"
+
+    cat >"$ABCL_SCRIPT" <<EOF
+#!/bin/sh
+java -cp "$ABCL_DIR/abcl-contrib.jar" -jar "$ABCL_DIR/abcl.jar" "\$@"
+EOF
+    chmod 755 "$ABCL_SCRIPT"
+
+    install_cl_launch "LISP=abcl" "ABCL=\"$ABCL_SCRIPT\""
+}
+
 SBCL_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.1.14/sbcl-1.1.14-x86-64-linux-binary.tar.bz2"
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
@@ -127,6 +146,9 @@ function install_quicklisp {
 download_cl_launch
 
 case "$LISP" in
+    abcl)
+        install_abcl
+        ;;
     sbcl)
         install_sbcl
         ;;

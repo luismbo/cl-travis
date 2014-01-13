@@ -2,6 +2,7 @@ language: lisp
 
 env:
   matrix:
+    - LISP=abcl
     - LISP=sbcl
     - LISP=ccl
     - LISP=clisp
