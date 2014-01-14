@@ -197,8 +197,15 @@ function install_ecl {
 }
 
 function install_clisp {
-    echo "Installing CLISP..."
-    sudo apt-get install clisp
+    if [ "$LISP" = "clisp32" ]; then
+        echo "Installing 32-bit CLISP..."
+        sudo apt-get remove libsigsegv2
+        sudo apt-get install libsigsegv2:i386 clisp:i386
+        sudo ln -s /usr/bin/clisp /usr/local/bin/clisp32
+    else
+        echo "Installing CLISP..."
+        sudo apt-get install clisp
+    fi
     get "$ASDF_URL" asdf.lisp
     echo "(load \"$HOME/asdf.lisp\")" > "$HOME/.clisprc.lisp"
     # tweaking CLISP_OPTIONS so that ASDF gets loaded via the RC file.
@@ -221,7 +228,7 @@ case "$LISP" in
     sbcl32) install_sbcl32 ;;
     ccl|ccl32) install_ccl ;;
     cmucl) install_cmucl ;;
-    clisp) install_clisp ;;
+    clisp|clisp32) install_clisp ;;
     ecl) install_ecl ;;
     *)
         echo "Unrecognised lisp: '$LISP'"
