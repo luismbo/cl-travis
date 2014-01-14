@@ -61,6 +61,21 @@ function install_cl_launch {
         -B install
 }
 
+ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
+ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/cl-travis.conf"
+LOCAL_LISP_TREE="$HOME/lisp"
+
+function setup_asdf_source_registry {
+    mkdir -p "$LOCAL_LISP_TREE"
+    mkdir -p "$ASDF_SR_CONF_DIR"
+
+    echo "(:tree \"$TRAVIS_BUILD_DIR/\")" > "$ASDF_SR_CONF_FILE"
+    echo "(:tree \"$LOCAL_LISP_TREE/\")" >> "$ASDF_SR_CONF_FILE"
+
+    echo "Created $ASDF_SR_CONF_FILE"
+    cat -n "$ASDF_SR_CONF_FILE"
+}
+
 # install_script <path> <lines...>
 function install_script {
     path=$1; shift
@@ -189,5 +204,6 @@ cl-launch -i '(format t "~%~a ~a up and running!~%~%"
                       (lisp-implementation-version))'
 
 install_quicklisp
+setup_asdf_source_registry
 
 popd
