@@ -2,16 +2,23 @@ language: lisp
 
 env:
   matrix:
+    - LISP=abcl
     - LISP=sbcl
     - LISP=ccl
     - LISP=clisp
     - LISP=cmucl
+    - LISP=ecl
 
 #matrix:
 #  allow_failures:
 #    - env: LISP=sbcl
 
 install: ./install.sh || curl https://raw2.github.com/luismbo/cl-travis/master/install.sh | bash
+
+before_script:
+  - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
+
 script:
-  - cl-launch -S "$(pwd)" -i '(load "~/quicklisp/setup.lisp") (ql:quickload :cl-travis-test) (rtest:do-tests) (or (null (rtest:pending-tests)) (cl-launch::quit 1))'
-  - cl-launch -S "$(pwd)" -i '(load "~/quicklisp/setup.lisp") (ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (or (null (rtest:pending-tests)) (cl-launch::quit 1))'; [ $? -eq 1 ]
+  - cl-launch -i "(load \"$HOME/quicklisp/setup.lisp\") (ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
+  - cl-launch -i "(load \"$HOME/quicklisp/setup.lisp\") (ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
+  - $LISP --help
