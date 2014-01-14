@@ -139,6 +139,16 @@ function install_cmucl {
     install_cl_launch "LISP=cmucl"
 }
 
+ECL_TARBALL_URL="http://common-lisp.net/~loliveira/tarballs/ecl-13.5.1-linux-amd64.tar.gz"
+ECL_TARBALL="ecl.tar.gz"
+
+function install_ecl {
+    echo "Installing ECL..."
+    get "$ECL_TARBALL_URL" "$ECL_TARBALL"
+    sudo tar -C / -xzf "$ECL_TARBALL"
+    install_cl_launch "LISP=ecl"
+}
+
 # version of ASDF known to work with cl-launch
 ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
 
@@ -167,6 +177,7 @@ case "$LISP" in
     ccl) install_ccl ;;
     cmucl) install_cmucl ;;
     clisp) install_clisp ;;
+    ecl) install_ecl ;;
     *)
         echo "Unrecognised lisp: '$LISP'"
         exit 1
