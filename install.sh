@@ -30,6 +30,9 @@ function install_i386_arch {
     sudo apt-get install libc6:i386
 }
 
+# version of ASDF known to work with cl-launch
+ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
+
 CL_LAUNCH_URL="http://common-lisp.net/project/xcvb/cl-launch/cl-launch.tar.gz"
 CL_LAUNCH_DIR="$HOME/cl-launch"
 CL_LAUNCH_TARBALL="$HOME/cl-launch.tar.gz"
@@ -119,6 +122,25 @@ function install_sbcl {
     install_cl_launch "LISP=sbcl"
 }
 
+SBCL32_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.0.58/sbcl-1.0.58-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL="sbcl32.tar.bz2"
+SBCL32_DIR="$HOME/sbcl32"
+
+function install_sbcl32 {
+    echo "Installing 32-bit SBCL..."
+    install_i386_arch
+
+    get "$SBCL32_TARBALL_URL" "$SBCL32_TARBALL"
+    unpack -j "$SBCL32_TARBALL" "$SBCL32_DIR"
+    ( cd "$SBCL32_DIR" && sudo bash install.sh )
+    sudo ln -s /usr/local/bin/sbcl /usr/local/bin/sbcl32
+
+    get "$ASDF_URL" asdf.lisp
+    echo "(load \"$HOME/asdf.lisp\")" > "$HOME/.sbclrc"
+    # tweaking SBCL_OPTIONS so that ASDF gets loaded via the RC file.
+    install_cl_launch "LISP=sbcl" "SBCL_OPTIONS='--noinform --disable-debugger'"
+}
+
 CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.9/ccl-1.9-linuxx86.tar.gz"
 CCL_TARBALL="ccl.tar.gz"
 CCL_DIR="$HOME/ccl"
@@ -164,9 +186,6 @@ function install_ecl {
     install_cl_launch "LISP=ecl"
 }
 
-# version of ASDF known to work with cl-launch
-ASDF_URL="https://raw.github.com/sbcl/sbcl/sbcl-1.1.14/contrib/asdf/asdf.lisp"
-
 function install_clisp {
     echo "Installing CLISP..."
     sudo apt-get install clisp
@@ -189,6 +208,7 @@ download_cl_launch
 case "$LISP" in
     abcl) install_abcl ;;
     sbcl) install_sbcl ;;
+    sbcl32) install_sbcl32 ;;
     ccl) install_ccl ;;
     cmucl) install_cmucl ;;
     clisp) install_clisp ;;

@@ -4,6 +4,7 @@ env:
   matrix:
     - LISP=abcl
     - LISP=sbcl
+    - LISP=sbcl32
     - LISP=ccl
     - LISP=clisp
     - LISP=cmucl
