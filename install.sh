@@ -144,14 +144,24 @@ function install_sbcl32 {
 CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.9/ccl-1.9-linuxx86.tar.gz"
 CCL_TARBALL="ccl.tar.gz"
 CCL_DIR="$HOME/ccl"
-CCL_SCRIPT="/usr/local/bin/ccl"
+CCL_SCRIPT_PREFIX="/usr/local/bin"
 
 function install_ccl {
-    echo "Installing CCL..."
+    if [ "$LISP" = "ccl32" ]; then
+        echo "Installing 32-bit CCL..."
+        install_i386_arch
+        bin="lx86cl"
+        script="ccl32"
+    else
+        echo "Installing CCL..."
+        bin="lx86cl64"
+        script="ccl"
+    fi
     get "$CCL_TARBALL_URL" "$CCL_TARBALL"
     unpack -z "$CCL_TARBALL" "$CCL_DIR"
-    install_script "$CCL_SCRIPT" "\"$CCL_DIR/lx86cl64\" \"\$@\""
-    install_cl_launch "LISP=ccl"
+
+    install_script "$CCL_SCRIPT_PREFIX/$script" "\"$CCL_DIR/$bin\" \"\$@\""
+    install_cl_launch "LISP=ccl" "CCL=\"$script\""
 }
 
 CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.tar.bz2"
@@ -209,7 +219,7 @@ case "$LISP" in
     abcl) install_abcl ;;
     sbcl) install_sbcl ;;
     sbcl32) install_sbcl32 ;;
-    ccl) install_ccl ;;
+    ccl|ccl32) install_ccl ;;
     cmucl) install_cmucl ;;
     clisp) install_clisp ;;
     ecl) install_ecl ;;
