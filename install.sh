@@ -198,7 +198,8 @@ install_clisp() {
     if [ "$LISP" = "clisp32" ]; then
         echo "Installing 32-bit CLISP..."
         sudo apt-get remove libsigsegv2
-        sudo apt-get install libsigsegv2:i386 clisp:i386
+        sudo apt-get install libsigsegv2:i386
+        sudo apt-get install clisp:i386
         sudo ln -s /usr/bin/clisp /usr/local/bin/clisp32
     else
         echo "Installing CLISP..."
