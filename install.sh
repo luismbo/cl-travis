@@ -1,11 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
-pushd "$HOME"
-
 # get <url> <destination>
-function get {
+get() {
     url=$1
     destination=$2
     echo "Downloading ${url}..."
@@ -13,7 +11,7 @@ function get {
 }
 
 # unpack <uncompression option> <file> <destination>
-function unpack {
+unpack() {
     opt=$1
     file=$2;
     destination=$3;
@@ -23,7 +21,7 @@ function unpack {
     tar -C "$destination" --strip-components=1 "$opt" -xf "$file"
 }
 
-function install_i386_arch {
+install_i386_arch() {
     # Travis-CI's dpkg doesn't seem to know about --add-architecture.
     #sudo dpkg --add-architecture i386
     #sudo apt-get update
@@ -39,13 +37,13 @@ CL_LAUNCH_TARBALL="$HOME/cl-launch.tar.gz"
 CL_LAUNCH_SCRIPT="/usr/local/bin/cl-launch"
 CL_LAUNCH_RC="$HOME/.cl-launchrc"
 
-function download_cl_launch {
+download_cl_launch() {
     get "$CL_LAUNCH_URL" "$CL_LAUNCH_TARBALL"
     unpack -z "$CL_LAUNCH_TARBALL" "$CL_LAUNCH_DIR"
 }
 
 # install_cl_launch <lisp> <option>
-function install_cl_launch {
+install_cl_launch() {
     echo "Installing cl-launch to $CL_LAUNCH_SCRIPT..."
 
     rm -f "$CL_LAUNCH_RC"
@@ -68,7 +66,7 @@ ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
 ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/cl-travis.conf"
 LOCAL_LISP_TREE="$HOME/lisp"
 
-function setup_asdf_source_registry {
+setup_asdf_source_registry() {
     mkdir -p "$LOCAL_LISP_TREE"
     mkdir -p "$ASDF_SR_CONF_DIR"
 
@@ -80,7 +78,7 @@ function setup_asdf_source_registry {
 }
 
 # install_script <path> <lines...>
-function install_script {
+install_script() {
     path=$1; shift
     tmp=$(mktemp)
 
@@ -98,7 +96,7 @@ ABCL_TARBALL="abcl.tar.gz"
 ABCL_DIR="$HOME/abcl"
 ABCL_SCRIPT="/usr/local/bin/abcl"
 
-function install_abcl {
+install_abcl() {
     sudo apt-get install default-jre
     get "$ABCL_TARBALL_URL" "$ABCL_TARBALL"
     unpack -z "$ABCL_TARBALL" "$ABCL_DIR"
@@ -114,7 +112,7 @@ SBCL_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.1.14/sbcl
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
 
-function install_sbcl {
+install_sbcl() {
     echo "Installing SBCL..."
     get "$SBCL_TARBALL_URL" "$SBCL_TARBALL"
     unpack -j "$SBCL_TARBALL" "$SBCL_DIR"
@@ -126,7 +124,7 @@ SBCL32_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.0.58/sb
 SBCL32_TARBALL="sbcl32.tar.bz2"
 SBCL32_DIR="$HOME/sbcl32"
 
-function install_sbcl32 {
+install_sbcl32() {
     echo "Installing 32-bit SBCL..."
     install_i386_arch
 
@@ -146,7 +144,7 @@ CCL_TARBALL="ccl.tar.gz"
 CCL_DIR="$HOME/ccl"
 CCL_SCRIPT_PREFIX="/usr/local/bin"
 
-function install_ccl {
+install_ccl() {
     if [ "$LISP" = "ccl32" ]; then
         echo "Installing 32-bit CCL..."
         install_i386_arch
@@ -171,7 +169,7 @@ CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
 CMUCL_DIR="$HOME/cmucl"
 CMUCL_SCRIPT="/usr/local/bin/cmucl"
 
-function install_cmucl {
+install_cmucl() {
     echo "Installing CMUCL..."
     install_i386_arch
     get "$CMUCL_TARBALL_URL" "$CMUCL_TARBALL"
@@ -189,14 +187,14 @@ function install_cmucl {
 ECL_TARBALL_URL="http://common-lisp.net/~loliveira/tarballs/ecl-13.5.1-linux-amd64.tar.gz"
 ECL_TARBALL="ecl.tar.gz"
 
-function install_ecl {
+install_ecl() {
     echo "Installing ECL..."
     get "$ECL_TARBALL_URL" "$ECL_TARBALL"
     sudo tar -C / -xzf "$ECL_TARBALL"
     install_cl_launch "LISP=ecl"
 }
 
-function install_clisp {
+install_clisp() {
     if [ "$LISP" = "clisp32" ]; then
         echo "Installing 32-bit CLISP..."
         sudo apt-get remove libsigsegv2
@@ -214,33 +212,35 @@ function install_clisp {
 
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
 
-function install_quicklisp {
+install_quicklisp() {
     get "$QUICKLISP_URL" quicklisp.lisp
     echo "Installing Quicklisp..."
     cl-launch -f quicklisp.lisp -i "(quicklisp-quickstart:install)"
 }
 
-download_cl_launch
+(
+    cd "$HOME"
 
-case "$LISP" in
-    abcl) install_abcl ;;
-    sbcl) install_sbcl ;;
-    sbcl32) install_sbcl32 ;;
-    ccl|ccl32) install_ccl ;;
-    cmucl) install_cmucl ;;
-    clisp|clisp32) install_clisp ;;
-    ecl) install_ecl ;;
-    *)
-        echo "Unrecognised lisp: '$LISP'"
-        exit 1
-        ;;
-esac
+    download_cl_launch
 
-cl-launch -i '(format t "~%~a ~a up and running!~%~%"
-                      (lisp-implementation-type)
-                      (lisp-implementation-version))'
+    case "$LISP" in
+        abcl) install_abcl ;;
+        sbcl) install_sbcl ;;
+        sbcl32) install_sbcl32 ;;
+        ccl|ccl32) install_ccl ;;
+        cmucl) install_cmucl ;;
+        clisp|clisp32) install_clisp ;;
+        ecl) install_ecl ;;
+        *)
+            echo "Unrecognised lisp: '$LISP'"
+            exit 1
+            ;;
+    esac
 
-install_quicklisp
-setup_asdf_source_registry
+    cl-launch -i '(format t "~%~a ~a up and running!~%~%"
+                            (lisp-implementation-type)
+                            (lisp-implementation-version))'
 
-popd
+    install_quicklisp
+    setup_asdf_source_registry
+)
