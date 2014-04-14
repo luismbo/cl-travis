@@ -22,6 +22,6 @@ before_script:
   - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
 
 script:
-  - cl-launch -i "(load \"$HOME/quicklisp/setup.lisp\") (ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
-  - cl-launch -i "(load \"$HOME/quicklisp/setup.lisp\") (ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
+  - cl-launch -i "(ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
+  - cl-launch -i "(ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
   - $LISP --help

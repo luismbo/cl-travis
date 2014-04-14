@@ -84,7 +84,6 @@ install_cl_launch() {
         -I "$CL_LAUNCH_DIR" \
         -o "$CL_LAUNCH_SCRIPT" \
         --rc \
-        --init '(load "$HOME/asdf.lisp")' \
         -B install
 }
 
@@ -237,6 +236,10 @@ install_quicklisp() {
     get "$QUICKLISP_URL" quicklisp.lisp
     echo "Installing Quicklisp..."
     cl-launch -f quicklisp.lisp -i "(quicklisp-quickstart:install)"
+    add_to_lisp_rc '(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+                                                           (user-homedir-pathname))))
+                      (when (probe-file quicklisp-init)
+                        (load quicklisp-init)))'
 }
 
 (
