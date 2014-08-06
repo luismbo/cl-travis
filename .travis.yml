@@ -4,8 +4,11 @@ env:
   matrix:
     - LISP=abcl
     - LISP=sbcl
+    - LISP=sbcl32
     - LISP=ccl
+    - LISP=ccl32
     - LISP=clisp
+    - LISP=clisp32
     - LISP=cmucl
     - LISP=ecl
 
@@ -19,6 +22,6 @@ before_script:
   - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
 
 script:
-  - cl-launch -i "(load \"$HOME/quicklisp/setup.lisp\") (ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
-  - cl-launch -i "(load \"$HOME/quicklisp/setup.lisp\") (ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
+  - cl-launch -i "(ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
+  - cl-launch -i "(ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
   - $LISP --help
