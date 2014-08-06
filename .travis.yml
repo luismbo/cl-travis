@@ -13,7 +13,7 @@ env:
 #  allow_failures:
 #    - env: LISP=sbcl
 
-install: ./install.sh || curl https://raw2.github.com/luismbo/cl-travis/master/install.sh | bash
+install: ./install.sh || curl https://raw2.github.com/luismbo/cl-travis/master/install.sh | sh
 
 before_script:
   - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
