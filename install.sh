@@ -24,7 +24,6 @@ unpack() {
 install_i386_arch() {
     # Travis-CI's dpkg doesn't seem to know about --add-architecture.
     #sudo dpkg --add-architecture i386
-    #sudo apt-get update
     sudo apt-get install libc6:i386
 }
 
@@ -245,6 +244,7 @@ install_quicklisp() {
 (
     cd "$HOME"
 
+    sudo apt-get update
     download_cl_launch
     install_asdf
 
