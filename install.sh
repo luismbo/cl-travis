@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# cl-travis install script. Don't remove this line.
 set -e
 
 # get <url> <destination>
