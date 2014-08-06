@@ -16,8 +16,8 @@ unpack() {
     file=$2;
     destination=$3;
 
-    echo "Unpacking tarball..."
-    mkdir "$destination"
+    echo "Unpacking tarball $1 into $3..."
+    mkdir -p "$destination"
     tar -C "$destination" --strip-components=1 "$opt" -xf "$file"
 }
 
