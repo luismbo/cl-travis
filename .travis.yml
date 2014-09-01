@@ -16,8 +16,14 @@ env:
 #  allow_failures:
 #    - env: LISP=sbcl
 
-install: ./install.sh
-
+install:
+  - if [ -x ./install.sh ] && head -2 ./install.sh | grep '^#cl-travis' > /dev/null;
+    then
+      ./install.sh;
+    else
+      curl https://raw2.github.com/luismbo/cl-travis/master/install.sh | sh;
+    fi     
+        
 before_script:
   - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
 
