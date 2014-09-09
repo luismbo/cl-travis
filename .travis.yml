@@ -17,7 +17,7 @@ env:
 #    - env: LISP=sbcl
 
 install:
-  - if [ -x ./install.sh ] && head -2 ./install.sh | grep '^#cl-travis' > /dev/null;
+  - if [ -x ./install.sh ] && head -2 ./install.sh | grep '^# cl-travis' > /dev/null;
     then
       ./install.sh;
     else
