@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/capitaomorte/cl-travis.png?branch=master)](https://travis-ci.org/capitaomorte/cl-travis)
+[![Build Status](https://travis-ci.org/luismbo/cl-travis.png?branch=master)](https://travis-ci.org/luismbo/cl-travis)
 
 Overview and Setup
 ------------------
