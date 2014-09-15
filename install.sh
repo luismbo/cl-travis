@@ -32,6 +32,7 @@ add_to_lisp_rc() {
     string=$1
     case "$LISP" in
         abcl) rc=".abclrc" ;;
+        allegro*) rc=".clinit.cl" ;;
         sbcl|sbcl32) rc=".sbclrc" ;;
         ccl|ccl32) rc=".ccl-init.lisp" ;;
         cmucl) rc=".cmucl-init.lisp" ;;
@@ -229,6 +230,32 @@ install_clisp() {
     install_cl_launch "LISP=clisp" "CLISP_OPTIONS=\"--quiet --quiet\""
 }
 
+ACL_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
+ACL_DIR="$HOME/acl"
+ACL_TARBALL="acl.tar.bz2"
+
+install_acl() {
+    echo "Installing Allegro CL..."
+    install_i386_arch
+    get "$ACL_TARBALL_URL" "$ACL_TARBALL"
+    mkdir -p "$ACL_DIR"
+    tar -C "$ACL_DIR" --strip-components=1 -xjf "$ACL_TARBALL"
+
+    case "$LISP" in
+        allegro) acl=alisp ;;
+        allegromodern) acl=mlisp ;;
+        *)
+            echo "Unrecognised lisp: '$LISP'"
+            exit 1
+            ;;
+    esac
+
+    sudo ln -vs "$ACL_DIR/$acl" "/usr/local/bin/$acl"
+    sudo ln -vs "$ACL_DIR/$acl" "/usr/local/bin/$LISP"
+
+    install_cl_launch "LISP=$LISP" "ALLEGRO_OPTIONS='-L ~/.clinit.cl'"
+}
+
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
 
 install_quicklisp() {
@@ -250,6 +277,7 @@ install_quicklisp() {
 
     case "$LISP" in
         abcl) install_abcl ;;
+        allegro|allegromodern) install_acl ;;
         sbcl) install_sbcl ;;
         sbcl32) install_sbcl32 ;;
         ccl|ccl32) install_ccl ;;

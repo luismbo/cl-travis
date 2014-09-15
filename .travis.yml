@@ -3,6 +3,7 @@ language: lisp
 env:
   matrix:
     - LISP=abcl
+    - LISP=allegro
     - LISP=sbcl
     - LISP=sbcl32
     - LISP=ccl
@@ -30,4 +31,3 @@ before_script:
 script:
   - cl-launch -i "(ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
   - cl-launch -i "(ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
-  - $LISP --help
