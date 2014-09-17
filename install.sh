@@ -133,7 +133,7 @@ install_abcl() {
     install_cl_launch "LISP=abcl" "ABCL_OPTIONS='--noinform'"
 }
 
-SBCL_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.1.14/sbcl-1.1.14-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.3-x86-64-linux-binary.tar.bz2"
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
 
