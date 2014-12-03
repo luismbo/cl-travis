@@ -13,9 +13,10 @@ env:
     - LISP=cmucl
     - LISP=ecl
 
-#matrix:
-#  allow_failures:
-#    - env: LISP=sbcl
+matrix:
+  allow_failures:
+    # CIM not available for CMUCL
+    - env: LISP=cmucl
 
 install:
   - if [ -x ./install.sh ] && head -2 ./install.sh | grep '^# cl-travis' > /dev/null;
@@ -29,5 +30,5 @@ before_script:
   - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
 
 script:
-  - cl-launch -i "(ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"
-  - cl-launch -i "(ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))"; [ $? -eq 1 ]
+  - cl -e '(ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))'
+  - cl -e '(ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))'; [ $? -eq 1 ]

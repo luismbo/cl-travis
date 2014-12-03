@@ -30,24 +30,10 @@ install_i386_arch() {
 # add_to_lisp_rc <string>
 add_to_lisp_rc() {
     string=$1
-    case "$LISP" in
-        abcl) rc=".abclrc" ;;
-        allegro*) rc=".clinit.cl" ;;
-        sbcl|sbcl32) rc=".sbclrc" ;;
-        ccl|ccl32) rc=".ccl-init.lisp" ;;
-        cmucl) rc=".cmucl-init.lisp" ;;
-        clisp|clisp32) rc=".clisprc.lisp" ;;
-        ecl) rc=".eclrc" ;;
-        *)
-            echo "Unrecognised lisp: '$LISP'"
-            exit 1
-            ;;
-    esac
-    echo "$string" >> "$HOME/$rc"
+    echo "$string" >> "$HOME/.cim/init.lisp"
 }
 
-# version of ASDF known to work with cl-launch (3.0.2)
-ASDF_URL="https://raw.githubusercontent.com/sbcl/sbcl/sbcl-1.1.17/contrib/asdf/asdf.lisp"
+ASDF_URL="https://raw.githubusercontent.com/luismbo/cl-travis/master/deps/asdf.lisp"
 ASDF_LOCATION="$HOME/asdf"
 
 install_asdf() {
@@ -57,34 +43,7 @@ install_asdf() {
 
 compile_asdf() {
     echo "Compiling ASDF..."
-    cl-launch -i "(compile-file \"$ASDF_LOCATION.lisp\")"
-}
-
-CL_LAUNCH_URL="http://common-lisp.net/project/xcvb/cl-launch/cl-launch-4.0.3.tar.gz"
-CL_LAUNCH_DIR="$HOME/cl-launch"
-CL_LAUNCH_TARBALL="$HOME/cl-launch.tar.gz"
-CL_LAUNCH_SCRIPT="/usr/local/bin/cl-launch"
-CL_LAUNCH_RC="$HOME/.cl-launchrc"
-
-download_cl_launch() {
-    get "$CL_LAUNCH_URL" "$CL_LAUNCH_TARBALL"
-    unpack -z "$CL_LAUNCH_TARBALL" "$CL_LAUNCH_DIR"
-}
-
-# install_cl_launch <lisp> <option>
-install_cl_launch() {
-    echo "Installing cl-launch to $CL_LAUNCH_SCRIPT..."
-
-    rm -f "$CL_LAUNCH_RC"
-    for arg; do
-        echo $arg >> "$CL_LAUNCH_RC"
-    done
-
-    sudo bash "$CL_LAUNCH_DIR/cl-launch.sh" \
-        -I "$CL_LAUNCH_DIR" \
-        -o "$CL_LAUNCH_SCRIPT" \
-        --rc \
-        -B install
+    cl -c "$ASDF_LOCATION.lisp" -Q
 }
 
 ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
@@ -130,7 +89,7 @@ install_abcl() {
         "java -cp \"$ABCL_DIR/abcl-contrib.jar\" \
               -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
 
-    install_cl_launch "LISP=abcl" "ABCL_OPTIONS='--noinform'"
+    cim use abcl-system --default
 }
 
 SBCL_TARBALL_URL="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.3-x86-64-linux-binary.tar.bz2"
@@ -142,7 +101,8 @@ install_sbcl() {
     get "$SBCL_TARBALL_URL" "$SBCL_TARBALL"
     unpack -j "$SBCL_TARBALL" "$SBCL_DIR"
     ( cd "$SBCL_DIR" && sudo bash install.sh )
-    install_cl_launch "LISP=sbcl" "SBCL_OPTIONS='--noinform --disable-debugger'"
+
+    cim use sbcl-system --default
 }
 
 SBCL32_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.0.58/sbcl-1.0.58-x86-linux-binary.tar.bz2"
@@ -158,7 +118,7 @@ install_sbcl32() {
     ( cd "$SBCL32_DIR" && sudo bash install.sh )
     sudo ln -s /usr/local/bin/sbcl /usr/local/bin/sbcl32
 
-    install_cl_launch "LISP=sbcl" "SBCL_OPTIONS='--noinform --disable-debugger'"
+    cim use sbcl-system --default
 }
 
 CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.9/ccl-1.9-linuxx86.tar.gz"
@@ -181,7 +141,12 @@ install_ccl() {
     unpack -z "$CCL_TARBALL" "$CCL_DIR"
 
     install_script "$CCL_SCRIPT_PREFIX/$script" "\"$CCL_DIR/$bin\" \"\$@\""
-    install_cl_launch "LISP=ccl" "CCL=\"$script\"" "CCL_OPTIONS='--quiet'"
+    if [ "$LISP" = "ccl32" ]; then
+        # also install the 'ccl' script so that CIM can pick it up.
+        install_script "$CCL_SCRIPT_PREFIX/ccl" "\"$CCL_DIR/$bin\" \"\$@\""
+    fi
+
+    cim use ccl-system --default
 }
 
 CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.tar.bz2"
@@ -203,7 +168,7 @@ install_cmucl() {
     install_script "$CMUCL_SCRIPT" \
         "CMUCLLIB=\"$CMUCL_DIR/lib/cmucl/lib\" \"$CMUCL_DIR/bin/lisp\" \"\$@\""
 
-    install_cl_launch "LISP=cmucl" "CMUCL_OPTIONS='-quiet'"
+    # XXX: no CIM support for CMUCL
 }
 
 ECL_TARBALL_URL="http://common-lisp.net/~loliveira/tarballs/ecl-13.5.1-linux-amd64.tar.gz"
@@ -213,7 +178,8 @@ install_ecl() {
     echo "Installing ECL..."
     get "$ECL_TARBALL_URL" "$ECL_TARBALL"
     sudo tar -C / -xzf "$ECL_TARBALL"
-    install_cl_launch "LISP=ecl" "ECL_OPTIONS='-q'"
+
+    cim use ecl-system --default
 }
 
 install_clisp() {
@@ -227,19 +193,12 @@ install_clisp() {
         echo "Installing CLISP..."
         sudo apt-get install clisp
     fi
-    install_cl_launch "LISP=clisp" "CLISP_OPTIONS=\"--quiet --quiet\""
+    cim use clisp-system --default
 }
-
-ACL_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
-ACL_DIR="$HOME/acl"
-ACL_TARBALL="acl.tar.bz2"
 
 install_acl() {
     echo "Installing Allegro CL..."
     install_i386_arch
-    get "$ACL_TARBALL_URL" "$ACL_TARBALL"
-    mkdir -p "$ACL_DIR"
-    tar -C "$ACL_DIR" --strip-components=1 -xjf "$ACL_TARBALL"
 
     case "$LISP" in
         allegro) acl=alisp ;;
@@ -250,29 +209,44 @@ install_acl() {
             ;;
     esac
 
-    sudo ln -vs "$ACL_DIR/$acl" "/usr/local/bin/$acl"
-    sudo ln -vs "$ACL_DIR/$acl" "/usr/local/bin/$LISP"
+    cim install "$acl"
 
-    install_cl_launch "LISP=$LISP" "ALLEGRO_OPTIONS='-L ~/.clinit.cl'"
+    sudo ln -vs "$HOME/.cim/bin/$acl" "/usr/local/bin/$acl"
+    sudo ln -vs "$HOME/.cim/bin/$acl" "/usr/local/bin/$LISP"
+
+    # XXX: cim doesn't support mlisp
+    cim use "$acl" --default
 }
 
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
 
 install_quicklisp() {
     get "$QUICKLISP_URL" quicklisp.lisp
-    echo "Installing Quicklisp..."
-    cl-launch -f quicklisp.lisp -i "(quicklisp-quickstart:install)"
+    echo 'Installing Quicklisp...'
+    cl -f quicklisp.lisp -e '(quicklisp-quickstart:install)'
     add_to_lisp_rc '(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
                                                            (user-homedir-pathname))))
                       (when (probe-file quicklisp-init)
                         (load quicklisp-init)))'
 }
 
+CL_SCRIPT="/usr/local/bin/cl"
+CIM_SCRIPT="/usr/local/bin/cim"
+QL_SCRIPT="/usr/local/bin/ql"
+
+install_cim() {
+    curl -L https://raw.github.com/KeenS/CIM/master/scripts/cim_installer | /bin/sh
+
+    install_script "$CL_SCRIPT"  ". \"$HOME\"/.cim/init.sh; exec cl  \"\$@\""
+    install_script "$CIM_SCRIPT" ". \"$HOME\"/.cim/init.sh; exec cim \"\$@\""
+    install_script "$QL_SCRIPT"  ". \"$HOME\"/.cim/init.sh; exec ql  \"\$@\""
+}
+
 (
     cd "$HOME"
 
     sudo apt-get update
-    download_cl_launch
+    install_cim
     install_asdf
 
     case "$LISP" in
@@ -292,10 +266,10 @@ install_quicklisp() {
 
     compile_asdf
 
-    cl-launch -i '(format t "~%~a ~a up and running! (ASDF ~a)~%~%"
-                            (lisp-implementation-type)
-                            (lisp-implementation-version)
-                            (asdf:asdf-version))'
+    cl -e '(format t "~%~a ~a up and running! (ASDF ~a)~%~%"
+                   (lisp-implementation-type)
+                   (lisp-implementation-version)
+                   (asdf:asdf-version))'
 
     install_quicklisp
     setup_asdf_source_registry
