@@ -255,7 +255,7 @@ install_cim() {
         sbcl) install_sbcl ;;
         sbcl32) install_sbcl32 ;;
         ccl|ccl32) install_ccl ;;
-        cmucl) install_cmucl ;;
+        cmucl) install_cmucl; exit 0 ;; # no CIM support
         clisp|clisp32) install_clisp ;;
         ecl) install_ecl ;;
         *)
