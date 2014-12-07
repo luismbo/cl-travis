@@ -121,7 +121,7 @@ install_sbcl32() {
     cim use sbcl-system --default
 }
 
-CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.9/ccl-1.9-linuxx86.tar.gz"
+CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.10/ccl-1.10-linuxx86.tar.gz"
 CCL_TARBALL="ccl.tar.gz"
 CCL_DIR="$HOME/ccl"
 CCL_SCRIPT_PREFIX="/usr/local/bin"
