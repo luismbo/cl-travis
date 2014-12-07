@@ -92,7 +92,7 @@ install_abcl() {
     cim use abcl-system --default
 }
 
-SBCL_TARBALL_URL="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.3-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
 
