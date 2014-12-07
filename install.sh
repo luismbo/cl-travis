@@ -105,7 +105,7 @@ install_sbcl() {
     cim use sbcl-system --default
 }
 
-SBCL32_TARBALL_URL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.0.58/sbcl-1.0.58-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL_URL="http://common-lisp.net/~loliveira/tarballs/sbcl-1.2.6-x86-linux-binary.tar.bz2"
 SBCL32_TARBALL="sbcl32.tar.bz2"
 SBCL32_DIR="$HOME/sbcl32"
 
