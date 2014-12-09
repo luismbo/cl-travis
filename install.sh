@@ -149,8 +149,8 @@ install_ccl() {
     cim use ccl-system --default
 }
 
-CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.tar.bz2"
-CMUCL_EXTRA_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/01/cmucl-2014-01-x86-linux.extra.tar.bz2"
+CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-darwin.extra.tar.bz2"
 CMUCL_TARBALL="cmucl.tar.bz2"
 CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
 CMUCL_DIR="$HOME/cmucl"
