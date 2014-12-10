@@ -2,12 +2,19 @@
 # cl-travis install script. Don't remove this line.
 set -e
 
-# get <url> <destination>
+# get <destination> <url(s)>
 get() {
-    url=$1
-    destination=$2
-    echo "Downloading ${url}..."
-    curl --no-progress-bar --retry 10  -o "$destination" -L "$url"
+    destination=$1; shift
+    for url in "$@"; do
+        echo "Downloading ${url}..."
+        if curl --no-progress-bar --retry 10  -o "$destination" -L "$url"; then
+            return 0;
+        else
+            echo "Failed to download ${url}."
+        fi
+    done
+
+    return 1;
 }
 
 # unpack <uncompression option> <file> <destination>
@@ -37,7 +44,7 @@ ASDF_URL="https://raw.githubusercontent.com/luismbo/cl-travis/master/deps/asdf.l
 ASDF_LOCATION="$HOME/asdf"
 
 install_asdf() {
-    get "$ASDF_URL" asdf.lisp
+    get asdf.lisp "$ASDF_URL"
     add_to_lisp_rc "(load \"$ASDF_LOCATION\")"
 }
 
@@ -75,14 +82,15 @@ install_script() {
     sudo mv "$tmp" "$path"
 }
 
-ABCL_TARBALL_URL="http://www.abcl.org/releases/1.2.1/abcl-bin-1.2.1.tar.gz"
+ABCL_TARBALL_URL1="http://www.abcl.org/releases/1.2.1/abcl-bin-1.2.1.tar.gz"
+ABCL_TARBALL_URL2="http://kerno.org/~luis/ci/abcl-bin-1.2.1.tar.gz"
 ABCL_TARBALL="abcl.tar.gz"
 ABCL_DIR="$HOME/abcl"
 ABCL_SCRIPT="/usr/local/bin/abcl"
 
 install_abcl() {
     sudo apt-get install default-jre
-    get "$ABCL_TARBALL_URL" "$ABCL_TARBALL"
+    get "$ABCL_TARBALL" "$ABCL_TARBALL_URL1" "$ABCL_TARBALL_URL2"
     unpack -z "$ABCL_TARBALL" "$ABCL_DIR"
 
     install_script "$ABCL_SCRIPT" \
@@ -92,20 +100,23 @@ install_abcl() {
     cim use abcl-system --default
 }
 
-SBCL_TARBALL_URL="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL1="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL2="http://common-lisp.net/~loliveira/tarballs/ci/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL3="http://kerno.org/~luis/ci/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
 
 install_sbcl() {
     echo "Installing SBCL..."
-    get "$SBCL_TARBALL_URL" "$SBCL_TARBALL"
+    get "$SBCL_TARBALL" "$SBCL_TARBALL_URL1" "$SBCL_TARBALL_URL2" "$SBCL_TARBALL_URL3"
     unpack -j "$SBCL_TARBALL" "$SBCL_DIR"
     ( cd "$SBCL_DIR" && sudo bash install.sh )
 
     cim use sbcl-system --default
 }
 
-SBCL32_TARBALL_URL="http://common-lisp.net/~loliveira/tarballs/sbcl-1.2.6-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL_URL1="http://common-lisp.net/~loliveira/tarballs/sbcl-1.2.6-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL_URL2="http://kerno.org/~luis/ci/sbcl-1.2.6-x86-linux-binary.tar.bz2"
 SBCL32_TARBALL="sbcl32.tar.bz2"
 SBCL32_DIR="$HOME/sbcl32"
 
@@ -113,7 +124,7 @@ install_sbcl32() {
     echo "Installing 32-bit SBCL..."
     install_i386_arch
 
-    get "$SBCL32_TARBALL_URL" "$SBCL32_TARBALL"
+    get "$SBCL32_TARBALL" "$SBCL32_TARBALL_URL1" "$SBCL32_TARBALL_URL2"
     unpack -j "$SBCL32_TARBALL" "$SBCL32_DIR"
     ( cd "$SBCL32_DIR" && sudo bash install.sh )
     sudo ln -s /usr/local/bin/sbcl /usr/local/bin/sbcl32
@@ -121,7 +132,9 @@ install_sbcl32() {
     cim use sbcl-system --default
 }
 
-CCL_TARBALL_URL="ftp://ftp.clozure.com/pub/release/1.10/ccl-1.10-linuxx86.tar.gz"
+CCL_TARBALL_URL1="ftp://ftp.clozure.com/pub/release/1.10/ccl-1.10-linuxx86.tar.gz"
+CCL_TARBALL_URL2="http://kerno.org/~luis/ci/ccl-1.10-linuxx86.tar.gz"
+CCL_TARBALL_URL3="http://common-lisp.net/~loliveira/tarballs/ci/ccl-1.10-linuxx86.tar.gz"
 CCL_TARBALL="ccl.tar.gz"
 CCL_DIR="$HOME/ccl"
 CCL_SCRIPT_PREFIX="/usr/local/bin"
@@ -137,7 +150,7 @@ install_ccl() {
         bin="lx86cl64"
         script="ccl"
     fi
-    get "$CCL_TARBALL_URL" "$CCL_TARBALL"
+    get "$CCL_TARBALL" "$CCL_TARBALL_URL1" "$CCL_TARBALL_URL2" "$CCL_TARBALL_URL3"
     unpack -z "$CCL_TARBALL" "$CCL_DIR"
 
     install_script "$CCL_SCRIPT_PREFIX/$script" "\"$CCL_DIR/$bin\" \"\$@\""
@@ -149,8 +162,10 @@ install_ccl() {
     cim use ccl-system --default
 }
 
-CMUCL_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-linux.tar.bz2"
-CMUCL_EXTRA_TARBALL_URL="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-darwin.extra.tar.bz2"
+CMUCL_TARBALL_URL1="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL1="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-darwin.extra.tar.bz2"
+CMUCL_TARBALL_URL2="http://kerno.org/~luis/ci/cmucl-2014-12-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL2="http://kerno.org/~luis/ci/cmucl-2014-12-x86-darwin.extra.tar.bz2"
 CMUCL_TARBALL="cmucl.tar.bz2"
 CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
 CMUCL_DIR="$HOME/cmucl"
@@ -159,8 +174,8 @@ CMUCL_SCRIPT="/usr/local/bin/cmucl"
 install_cmucl() {
     echo "Installing CMUCL..."
     install_i386_arch
-    get "$CMUCL_TARBALL_URL" "$CMUCL_TARBALL"
-    get "$CMUCL_EXTRA_TARBALL_URL" "$CMUCL_EXTRA_TARBALL"
+    get "$CMUCL_TARBALL" "$CMUCL_TARBALL_URL1" "$CMUCL_TARBALL_URL2"
+    get "$CMUCL_EXTRA_TARBALL" "$CMUCL_EXTRA_TARBALL_URL" "$CMUCL_EXTRA_TARBALL_URL2"
     mkdir -p "$CMUCL_DIR"
     tar -C "$CMUCL_DIR" -xjf "$CMUCL_TARBALL"
     tar -C "$CMUCL_DIR" -xjf "$CMUCL_EXTRA_TARBALL"
@@ -171,12 +186,13 @@ install_cmucl() {
     # XXX: no CIM support for CMUCL
 }
 
-ECL_TARBALL_URL="http://common-lisp.net/~loliveira/tarballs/ecl-13.5.1-linux-amd64.tar.gz"
+ECL_TARBALL_URL1="http://common-lisp.net/~loliveira/tarballs/ecl-13.5.1-linux-amd64.tar.gz"
+ECL_TARBALL_URL2="http://kerno.org/~luis/ci/ecl-13.5.1-linux-amd64.tar.gz"
 ECL_TARBALL="ecl.tar.gz"
 
 install_ecl() {
     echo "Installing ECL..."
-    get "$ECL_TARBALL_URL" "$ECL_TARBALL"
+    get "$ECL_TARBALL" "$ECL_TARBALL_URL1" "$ECL_TARBALL_URL2"
     sudo tar -C / -xzf "$ECL_TARBALL"
 
     cim use ecl-system --default
@@ -221,7 +237,7 @@ install_acl() {
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
 
 install_quicklisp() {
-    get "$QUICKLISP_URL" quicklisp.lisp
+    get quicklisp.lisp "$QUICKLISP_URL"
     echo 'Installing Quicklisp...'
     cl -f quicklisp.lisp -e '(quicklisp-quickstart:install)'
     add_to_lisp_rc '(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
