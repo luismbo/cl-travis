@@ -7,8 +7,11 @@ CL-TRAVIS helps you test your Common Lisp projects with [Travis][1]
 and many different Lisp implementations: ABCL, Allegro CL, SBCL,
 CMUCL, CCL and ECL.
 
-In addition, it installs Quicklisp for  as well as [CIM][4], which
-means you can conveniently run Lisp code using the `cl` command.
+In addition, it installs Quicklisp as well as [CIM][4], which
+means you can conveniently run Lisp code using the `cl` command
+and grab dependencies via `ql:quickload`. ASDF is set up to look
+for system definitions recursively within your project repository
+and within the `~/lisp` directory.
 
 Using it is simple, you don't even have to clone this repository:
 
@@ -18,7 +21,17 @@ Using it is simple, you don't even have to clone this repository:
 3. Push it to the root of your project's repository and
    [enable Travis][3] from your GitHub account.
 
+Examples
+--------
 
+Here's a list of `.travis.yml` files from various projects using CL-TRAVIS:
+[CFFI](https://github.com/cffi/cffi/blob/master/.travis.yml),
+[SLIME](https://github.com/slime/slime/blob/master/.travis.yml),
+[Osicat](https://github.com/osicat/osicat/blob/master/.travis.yml),
+[stumpwm](https://github.com/stumpwm/stumpwm/blob/master/.travis.yml),
+[Babel](https://github.com/cl-babel/babel/blob/master/.travis.yml),
+[trivial-garbage](https://github.com/trivial-garbage/trivial-garbage/blob/master/.travis.yml),
+[trivial-features](https://github.com/trivial-features/trivial-features/blob/master/.travis.yml).
 
 [1]: https://travis-ci.org
 [2]: https://raw.githubusercontent.com/luismbo/cl-travis/master/.travis.yml
