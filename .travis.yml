@@ -18,6 +18,8 @@ matrix:
     # CIM not available for CMUCL
     - env: LISP=cmucl
 
+# either use a local install.sh script or install it via curl. Feel
+# free to simplify this section in your own .travis.yml file.
 install:
   - if [ -x ./install.sh ] && head -2 ./install.sh | grep '^# cl-travis' > /dev/null;
     then
@@ -25,10 +27,26 @@ install:
     else
       curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | sh;
     fi     
-        
+
+# this bit is just testing that travis correctly sets up ASDF to find
+# systems placed somewhere within ~/lisp. You can remove this section
+# in your own .travis.yml file.
 before_script:
   - echo "(defsystem :dummy-cl-travis-system)" > ~/lisp/dummy-cl-travis-system.asd
 
+# this serves as an example of how to use the 'cl' script (provided by
+# CIM) to test your Lisp project. Here, we're using the RT framework
+# to do unit testing; other frameworks will have different ways of
+# determining whether a test suite fails or succeeds.
 script:
-  - cl -e '(ql:quickload :cl-travis-test) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))'
-  - cl -e '(ql:quickload :cl-travis-test) (pushnew :force-test-failure *features*) (rtest:do-tests) (unless (null (rtest:pending-tests)) (uiop:quit 1))'; [ $? -eq 1 ]
+  - cl -e '(ql:quickload :cl-travis-test)
+           (rtest:do-tests)
+           (unless (null (rtest:pending-tests))
+             (uiop:quit 1))'
+  - cl -e '(ql:quickload :cl-travis-test)
+           (pushnew :force-test-failure *features*)
+           (rtest:do-tests)
+           (unless (null (rtest:pending-tests))
+             (uiop:quit 1))';
+    [ $? -eq 1 ]
+
