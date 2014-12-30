@@ -50,3 +50,10 @@ script:
              (uiop:quit 1))';
     [ $? -eq 1 ]
 
+  # testing (albeit not extensively) that, even when invoked directly,
+  # Lisps still have Quicklisp available.
+  - if [ "$LISP" = "sbcl" ]; then
+      sbcl --non-interactive
+           --eval '(format t "~%Quicklisp version ~a is available!~%"
+                             (ql:client-version))';
+    fi

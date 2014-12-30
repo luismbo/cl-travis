@@ -37,7 +37,23 @@ install_i386_arch() {
 # add_to_lisp_rc <string>
 add_to_lisp_rc() {
     string=$1
+
+    case "$LISP" in
+        abcl) rc=".abclrc" ;;
+        allegro*) rc=".clinit.cl" ;;
+        sbcl*) rc=".sbclrc" ;;
+        ccl*) rc=".ccl-init.lisp" ;;
+        cmucl) rc=".cmucl-init.lisp" ;;
+        clisp*) rc=".clisprc.lisp" ;;
+        ecl) rc=".eclrc" ;;
+        *)
+            echo "Unable to determine RC file for '$LISP'."
+            exit 1
+            ;;
+    esac
+
     echo "$string" >> "$HOME/.cim/init.lisp"
+    echo "$string" >> "$HOME/$rc"
 }
 
 ASDF_URL="https://raw.githubusercontent.com/luismbo/cl-travis/master/deps/asdf.lisp"
