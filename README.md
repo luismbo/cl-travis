@@ -9,7 +9,7 @@ CMUCL, CCL and ECL.
 
 Using it is simple, you don't even have to clone this repository:
 
-1. Grab the the sample [`.travis.yml`][2] file or one from the examples below
+1. Grab the sample [`.travis.yml`][2] file or one from the examples below
 2. Modify it to test your own project
 3. Push it to the root of your project's repository and
    [enable Travis][3] from your GitHub account.
@@ -17,10 +17,10 @@ Using it is simple, you don't even have to clone this repository:
 Pulling in dependencies
 -----------------------
 
-In the travis box, it installs Quicklisp as well as [CIM][4], which
+In the travis box, [CIM][4] and Quicklisp are installed, which
 means you can conveniently run Lisp code from shell-script snippets
-in your `.travis.yml` files, using the `cl` command, grabbing any 
-dependencies via `ql:quickload`. 
+in your `.travis.yml` files, using the CIM's `cl` command, grabbing 
+any  dependencies via Quicklisp's `ql:quickload`. 
 
 Also, ASDF is set up to look for system definitions recursively within 
 your project repository and within the `~/lisp` directory, so 
