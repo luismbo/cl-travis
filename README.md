@@ -49,10 +49,12 @@ dependencies via Quicklisp's `ql:quickload`.
 
 Also, ASDF is set up to look for system definitions recursively within
 your project repository and within the `~/lisp` directory, so
-`ql:quickload` will find these before any others.
+`ql:quickload` (or `asdf:load-system`) will find these before any
+others.
 
 Here's an example that tests [babel][5] against the bleeding edge 
-versions of [trivial-features][6] and [alexandria][7]
+versions of [trivial-features][6] and [alexandria][7] but grabs
+its remaining dependencies through Quicklisp.
 
 ```yaml
 install:
