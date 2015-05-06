@@ -262,12 +262,16 @@ install_quicklisp() {
                         (load quicklisp-init)))'
 }
 
+# this variable is used to grab a specific version of the
+# cim_installer which itself looks at this variable to figure out
+# which version of CIM it should install.
+CIM_INSTALL_BRANCH=47079db7f26a7a0e9100211a0ad122ea2e482eef
 CL_SCRIPT="/usr/local/bin/cl"
 CIM_SCRIPT="/usr/local/bin/cim"
 QL_SCRIPT="/usr/local/bin/ql"
 
 install_cim() {
-    curl -L https://raw.github.com/KeenS/CIM/master/scripts/cim_installer | /bin/sh
+    curl -L "https://raw.github.com/KeenS/CIM/$CIM_INSTALL_BRANCH/scripts/cim_installer" | /bin/sh
 
     install_script "$CL_SCRIPT"  ". \"$HOME\"/.cim/init.sh; exec cl  \"\$@\""
     install_script "$CIM_SCRIPT" ". \"$HOME\"/.cim/init.sh; exec cim \"\$@\""
