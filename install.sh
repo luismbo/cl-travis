@@ -98,8 +98,8 @@ install_script() {
     sudo mv "$tmp" "$path"
 }
 
-ABCL_TARBALL_URL1="http://www.abcl.org/releases/1.2.1/abcl-bin-1.2.1.tar.gz"
-ABCL_TARBALL_URL2="http://kerno.org/~luis/ci/abcl-bin-1.2.1.tar.gz"
+ABCL_TARBALL_URL1="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
+ABCL_TARBALL_URL2="https://deneb.cddr.org/ci/abcl-bin-1.3.2.tar.gz"
 ABCL_TARBALL="abcl.tar.gz"
 ABCL_DIR="$HOME/abcl"
 ABCL_SCRIPT="/usr/local/bin/abcl"
@@ -116,23 +116,22 @@ install_abcl() {
     cim use abcl-system --default
 }
 
-SBCL_TARBALL_URL1="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
-SBCL_TARBALL_URL2="http://common-lisp.net/~loliveira/tarballs/ci/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
-SBCL_TARBALL_URL3="http://kerno.org/~luis/ci/sbcl-1.2.6-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL1="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL2="https://deneb.cddr.org/ci/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
 
 install_sbcl() {
     echo "Installing SBCL..."
-    get "$SBCL_TARBALL" "$SBCL_TARBALL_URL1" "$SBCL_TARBALL_URL2" "$SBCL_TARBALL_URL3"
+    get "$SBCL_TARBALL" "$SBCL_TARBALL_URL1" "$SBCL_TARBALL_URL2"
     unpack -j "$SBCL_TARBALL" "$SBCL_DIR"
     ( cd "$SBCL_DIR" && sudo bash install.sh )
 
     cim use sbcl-system --default
 }
 
-SBCL32_TARBALL_URL1="http://common-lisp.net/~loliveira/tarballs/sbcl-1.2.6-x86-linux-binary.tar.bz2"
-SBCL32_TARBALL_URL2="http://kerno.org/~luis/ci/sbcl-1.2.6-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL_URL1="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.7-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL_URL2="https://deneb.cddr.org/ci/sbcl-1.2.7-x86-linux-binary.tar.bz2"
 SBCL32_TARBALL="sbcl32.tar.bz2"
 SBCL32_DIR="$HOME/sbcl32"
 
@@ -178,10 +177,10 @@ install_ccl() {
     cim use ccl-system --default
 }
 
-CMUCL_TARBALL_URL1="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-linux.tar.bz2"
-CMUCL_EXTRA_TARBALL_URL1="http://common-lisp.net/project/cmucl/downloads/snapshots/2014/12/cmucl-2014-12-x86-darwin.extra.tar.bz2"
-CMUCL_TARBALL_URL2="http://kerno.org/~luis/ci/cmucl-2014-12-x86-linux.tar.bz2"
-CMUCL_EXTRA_TARBALL_URL2="http://kerno.org/~luis/ci/cmucl-2014-12-x86-darwin.extra.tar.bz2"
+CMUCL_TARBALL_URL1="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL1="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
+CMUCL_TARBALL_URL2="https://deneb.cddr.org/ci/cmucl-2015-07-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL2="https://deneb.cddr.org/ci/cmucl-2015-07-x86-linux.extra.tar.bz2"
 CMUCL_TARBALL="cmucl.tar.bz2"
 CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
 CMUCL_DIR="$HOME/cmucl"
