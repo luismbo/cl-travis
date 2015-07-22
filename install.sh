@@ -99,7 +99,7 @@ install_script() {
 }
 
 ABCL_TARBALL_URL1="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
-ABCL_TARBALL_URL2="https://deneb.cddr.org/ci/abcl-bin-1.3.2.tar.gz"
+ABCL_TARBALL_URL2="http://cddr.org/ci/abcl-bin-1.3.2.tar.gz"
 ABCL_TARBALL="abcl.tar.gz"
 ABCL_DIR="$HOME/abcl"
 ABCL_SCRIPT="/usr/local/bin/abcl"
@@ -117,7 +117,7 @@ install_abcl() {
 }
 
 SBCL_TARBALL_URL1="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
-SBCL_TARBALL_URL2="https://deneb.cddr.org/ci/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
+SBCL_TARBALL_URL2="http://cddr.org/ci/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
 SBCL_TARBALL="sbcl.tar.bz2"
 SBCL_DIR="$HOME/sbcl"
 
@@ -131,7 +131,7 @@ install_sbcl() {
 }
 
 SBCL32_TARBALL_URL1="http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.7-x86-linux-binary.tar.bz2"
-SBCL32_TARBALL_URL2="https://deneb.cddr.org/ci/sbcl-1.2.7-x86-linux-binary.tar.bz2"
+SBCL32_TARBALL_URL2="http://cddr.org/ci/sbcl-1.2.7-x86-linux-binary.tar.bz2"
 SBCL32_TARBALL="sbcl32.tar.bz2"
 SBCL32_DIR="$HOME/sbcl32"
 
@@ -179,8 +179,8 @@ install_ccl() {
 
 CMUCL_TARBALL_URL1="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
 CMUCL_EXTRA_TARBALL_URL1="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
-CMUCL_TARBALL_URL2="https://deneb.cddr.org/ci/cmucl-2015-07-x86-linux.tar.bz2"
-CMUCL_EXTRA_TARBALL_URL2="https://deneb.cddr.org/ci/cmucl-2015-07-x86-linux.extra.tar.bz2"
+CMUCL_TARBALL_URL2="http://cddr.org/ci/cmucl-2015-07-x86-linux.tar.bz2"
+CMUCL_EXTRA_TARBALL_URL2="http://cddr.org/ci/cmucl-2015-07-x86-linux.extra.tar.bz2"
 CMUCL_TARBALL="cmucl.tar.bz2"
 CMUCL_EXTRA_TARBALL="cmucl-extra.tar.bz2"
 CMUCL_DIR="$HOME/cmucl"
