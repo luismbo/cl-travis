@@ -31,7 +31,7 @@ unpack() {
 install_i386_arch() {
     # Travis-CI's dpkg doesn't seem to know about --add-architecture.
     #sudo dpkg --add-architecture i386
-    sudo apt-get install libc6:i386
+    sudo apt-get install -y libc6:i386
 }
 
 # add_to_lisp_rc <string>
@@ -105,7 +105,7 @@ ABCL_DIR="$HOME/abcl"
 ABCL_SCRIPT="/usr/local/bin/abcl"
 
 install_abcl() {
-    sudo apt-get install default-jre
+    sudo apt-get install -y default-jre
     get "$ABCL_TARBALL" "$ABCL_TARBALL_URL1" "$ABCL_TARBALL_URL2"
     unpack -z "$ABCL_TARBALL" "$ABCL_DIR"
 
@@ -216,13 +216,13 @@ install_ecl() {
 install_clisp() {
     if [ "$LISP" = "clisp32" ]; then
         echo "Installing 32-bit CLISP..."
-        sudo apt-get remove libsigsegv2
-        sudo apt-get install libsigsegv2:i386
-        sudo apt-get install clisp:i386
+        sudo apt-get remove -y libsigsegv2
+        sudo apt-get install -y libsigsegv2:i386
+        sudo apt-get install -y clisp:i386
         sudo ln -s /usr/bin/clisp /usr/local/bin/clisp32
     else
         echo "Installing CLISP..."
-        sudo apt-get install clisp
+        sudo apt-get install -y clisp
     fi
     cim use clisp-system --default
 }
