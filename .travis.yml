@@ -18,6 +18,8 @@ matrix:
   allow_failures:
     # CIM not available for CMUCL
     - env: LISP=cmucl
+    # issue #16
+    - env: LISP=allegro
 
 # either use a local install.sh script or install it via curl. Feel
 # free to simplify this section in your own .travis.yml file.
