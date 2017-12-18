@@ -267,7 +267,7 @@ install_quicklisp() {
 # this variable is used to grab a specific version of the
 # cim_installer which itself looks at this variable to figure out
 # which version of CIM it should install.
-CIM_INSTALL_BRANCH=47079db7f26a7a0e9100211a0ad122ea2e482eef
+CIM_INSTALL_BRANCH=c9f4ea960ce4504d5ddd229b9f0f83ddc6dce773
 CL_SCRIPT="/usr/local/bin/cl"
 CIM_SCRIPT="/usr/local/bin/cim"
 QL_SCRIPT="/usr/local/bin/ql"
