@@ -230,6 +230,9 @@ install_clisp() {
     cim use clisp-system --default
 }
 
+ACL_TARBALL_URL="https://franz.com/ftp/pub/acl10.1express/linux86/acl10.1express-linux-x86.tbz2"
+ACL_TARBALL="acl.tbz2"
+ACL_DIR="$HOME/acl"
 install_acl() {
     echo "Installing Allegro CL..."
     install_i386_arch
@@ -243,13 +246,12 @@ install_acl() {
             ;;
     esac
 
-    cim install "$acl"
+    get "$ACL_TARBALL" "$ACL_TARBALL_URL"
+    unpack -j "$ACL_TARBALL" "$ACL_DIR"
 
-    sudo ln -vs "$HOME/.cim/bin/$acl" "/usr/local/bin/$acl"
-    sudo ln -vs "$HOME/.cim/bin/$acl" "/usr/local/bin/$LISP"
+    sudo ln -vs "$ACL_DIR"/alisp "/usr/local/bin/$acl"
 
-    # XXX: cim doesn't support mlisp
-    cim use "$acl" --default
+    cim use alisp-system --default
 }
 
 QUICKLISP_URL="http://beta.quicklisp.org/quicklisp.lisp"
