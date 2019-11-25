@@ -29,8 +29,6 @@ unpack() {
 }
 
 install_i386_arch() {
-    # hack for issue #17
-    sudo sed -i -e 's/deb http/deb [arch=amd64] http/' "/etc/apt/sources.list.d/google-chrome.list"
     sudo dpkg --add-architecture i386
     sudo apt-get update -qq
     sudo apt-get install -y libc6:i386
